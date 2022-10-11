@@ -3,6 +3,7 @@ package edu.sdse.csvprocessor;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.util.*;
 
 public class CityCSVProcessor {
 	
@@ -14,7 +15,12 @@ public class CityCSVProcessor {
 			
 			String line;
 			
+			Map<String, List<cityRecord>> recordMap = new HashMap<>();
+			List<cityRecord> allRecords = new ArrayList<>();
+			
 			while ((line = br.readLine()) != null) {
+				
+				
 				// Parse each line
 				String[] rawValues = line.split(",");
 				
@@ -24,11 +30,24 @@ public class CityCSVProcessor {
 				int population = convertToInt(rawValues[3]);
 				
 				//System.out.println("id: " + id + ", year: " + year + ", city: " + city + ", population: " + population);
-				//TODO: Extend the program to process entries!
-				
+				//TODO: Extend the program to process entries!	
 				cityRecord obj = new cityRecord(id, year, city, population); // Create (instantiating) class object
-				System.out.println(obj);
+				/*
+				allRecords.add(obj);
+				if (recordMap.get(city) == null)
+					recordMap.put(city,allRecords);
+				else 
+					allRecords.addAll(recordMap.get(city));
+					//System.out.println(allRecords);
+					recordMap.put(city,allRecords);
+				*/
+				if (!recordMap.containsKey(city)) {
+					recordMap.put(city, new ArrayList<cityRecord>());
+				}
+				recordMap.get(city).add(obj);
 			}
+			System.out.println(recordMap.get("Oslo"));
+			
 		} catch (Exception e) {
 			System.err.println("An error occurred:");
 			e.printStackTrace();
@@ -53,6 +72,8 @@ public class CityCSVProcessor {
 		
 		return rawValue;
 	}
+	
+	
 	
 	public static final void main(String[] args) {
 		CityCSVProcessor reader = new CityCSVProcessor();
