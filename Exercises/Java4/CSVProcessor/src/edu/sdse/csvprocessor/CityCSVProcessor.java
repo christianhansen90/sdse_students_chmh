@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.*;
-import java.util.Map.Entry;
 
 public class CityCSVProcessor {
 	
@@ -16,34 +15,57 @@ public class CityCSVProcessor {
 			
 			String line;
 			
+			/* 
+			 * Create Map. 
+			 * Key is City Name <String>, Value will be list of city records List<cityRecord>
+			 * The map is called recordMap
+			 * note: Map is like a Python dict
+			 */
 			Map<String, List<cityRecord>> recordMap = new HashMap<>();
-			List<cityRecord> allRecords = new ArrayList<>();
 			
 			while ((line = br.readLine()) != null) {
 				// Parse each line
 				String[] rawValues = line.split(",");
 				
+				// Define each variable
 				int id = convertToInt(rawValues[0]);
 				int year = convertToInt(rawValues[1]);
 				String city = convertToString(rawValues[2]);
 				int population = convertToInt(rawValues[3]);
-					
-				cityRecord obj = new cityRecord(id, year, city, population); // Create (instantiating) class object
-				if (!recordMap.containsKey(city)) { // Check if city is a key
-					recordMap.put(city, new ArrayList<cityRecord>()); // Create empty array if city is not a key
-				}
-				recordMap.get(city).add(obj); // add obj to value array
-			}
-			
-			for (Map.Entry<String, List<cityRecord>> entry : recordMap.entrySet()) {
-				int i = 0; // Counter for entries
-				int totalPop = 0; // Sum of populations
-				List<Integer> years = new ArrayList<>(); // Initialise list for the years
 				
+				// Create (instantiating) class object
+				cityRecord obj = new cityRecord(id, year, city, population);
+				
+				// Check if city is a key in the Map
+				if (!recordMap.containsKey(city)) { 
+					/* 
+					 * If the city is NOT a key, create a Map entry
+					 * with the city as a key, and
+					 * a NEW empty ArrayList as the value associated to the city key 
+					 */
+					recordMap.put(city, new ArrayList<cityRecord>()); 
+				}
+				/* 
+				 * Then add 'obj', which is a city record containing:
+				 * id, year, city, population
+				 * to the City's Value (which is an ArrayList)
+				 * Each Key (city) now essentially contains a list
+				 * of lists as its Value
+				 */
+				recordMap.get(city).add(obj); 
+			}
+			 	// Now iterate through each Key Value pair in the Map
+				// call this 'entry'
+			for (Map.Entry<String, List<cityRecord>> entry : recordMap.entrySet()) {
+				int i = 0; 									// Counter for entries
+				int totalPop = 0; 							// Sum of populations
+				List<Integer> years = new ArrayList<>(); 	// Initialize list for the years
+				
+				// Go through each cityRecord for each City
 				for (cityRecord record : entry.getValue()) {
-					i++; // Increment entry count
-					years.add(record.year); // Add year to list
-					totalPop += record.population; // Increment sum of populations
+					i++; 									// Increment entry count
+					years.add(record.year); 				// Add year to list
+					totalPop += record.population; 			// Increment sum of populations
 					}
 				// Do calculations
 				int min = Collections.min(years); 
